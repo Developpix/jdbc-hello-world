@@ -13,13 +13,24 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+/**
+ * Application.
+ *
+ * @author Thibaut PICHON & Jocelyn ROUL
+ */
 public class Application {
     private final DatabaseService databaseService;
     private JedisPool jedisPool;
+
     private final static int TTL = 120;
     private static final String ALL_USERS_KEY = "ALL_USERS_KEY";
     private static final String USER_KEY_FORMAT = "USER_%d";
 
+    /**
+     * Constructor.
+     *
+     * @throws Exception Exception thrown when initialising database failed.
+     */
     public Application() throws Exception {
         databaseService = new DatabaseService("jdbc:derby:/tmp/my-db\n;create=true");
         databaseService.createSchema();
@@ -31,7 +42,11 @@ public class Application {
         jedis.close();
     }
 
-
+    /**
+     * Get all users.
+     * @return All users.
+     * @throws Exception Exception thrown when get data from database failed.
+     */
     public List<Map<String, String>> getUserAllAsMap() throws Exception {
         Jedis jedis = this.jedisPool.getResource();
 
@@ -49,7 +64,12 @@ public class Application {
         return gson.fromJson(res, new TypeToken<LinkedList<TreeMap<String, String>>>(){}.getType());
     }
 
-
+    /**
+     * Get user data.
+     * @param id User id.
+     * @return User data.
+     * @throws Exception Exception thrown when get data from database failed.
+     */
     public Map<String, String> getUserById(int id) throws Exception {
         Jedis jedis = this.jedisPool.getResource();
 
@@ -68,6 +88,10 @@ public class Application {
         return gson.fromJson(res, new TypeToken<TreeMap<String, String>>(){}.getType());
     }
 
+    /**
+     * Close database connection.
+     * @throws SQLException Exception thrown when close database connection failed.
+     */
     public void closeConnection() throws SQLException {
         this.databaseService.closeConnection();
     }
